@@ -6,7 +6,7 @@ const { runSequence } = require("./robot")
 
 app.use(express.json())
 
-app.post("/sequence", (req, res) => {
+app.post("/sequence", async (req, res) => {
     try {
         const { sequence } = req.body
         await runSequence(sequence)
