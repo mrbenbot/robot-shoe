@@ -1,17 +1,53 @@
 const { Gpio } = require('pigpio')
 
-const leftBack = new Gpio(7, {
+const DURATION = 1000
+
+const rightForward = new Gpio(7, {
     mode: Gpio.OUTPUT
 });
-const leftForward = new Gpio(8, {
+const rightBackward = new Gpio(8, {
     mode: Gpio.OUTPUT
 });
-const rightBack = new Gpio(9, {
+const leftForward = new Gpio(9, {
     mode: Gpio.OUTPUT
 });
-const rightForward = new Gpio(10, {
+const leftBackWard = new Gpio(10, {
     mode: Gpio.OUTPUT
 });
 
 
-rightForward.digitalWrite(1)
+
+function move([rf, rb, lf, lb]) {
+    rightForward.digitalWrite(rf)
+    rightBackward.digitalWrite(rb)
+    leftForward.digitalWrite(lf)
+    leftBackWard.digitalWrite(lb)
+    return new Promise((res) => {
+        setTimeout(res, DURATION)
+    })
+}
+
+function stop() {
+    rightForward.digitalWrite(0)
+    rightBackward.digitalWrite(0)
+    leftForward.digitalWrite(0)
+    leftBackWard.digitalWrite(0)
+}
+const movements = ["forward", "left", "backward", "right"]
+
+const movementDictionary = {
+    forward: [1, 0, 1, 0],
+    left: [1, 0, 0, 1],
+    backward: [0, 1, 0, 1],
+    right: [0, 1, 1, 0],
+    stop: [0, 0, 0, 0]
+}
+
+async function runSequence(sequence) {
+    const sequenceWithStop = [...sequence, "stop"]
+    for (let i = 0; i < sequenceWithStop.length; i++) {
+        await move(movementDictionary[sequenceWithStop[i]])
+    }
+}
+
+runSequence(movements)
