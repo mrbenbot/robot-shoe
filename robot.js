@@ -27,13 +27,6 @@ function move([rf, rb, lf, lb]) {
     })
 }
 
-function stop() {
-    rightForward.digitalWrite(0)
-    rightBackward.digitalWrite(0)
-    leftForward.digitalWrite(0)
-    leftBackWard.digitalWrite(0)
-}
-const movements = ["forward", "left", "backward", "right"]
 
 const movementDictionary = {
     forward: [1, 0, 1, 0],
@@ -46,8 +39,8 @@ const movementDictionary = {
 async function runSequence(sequence) {
     const sequenceWithStop = [...sequence, "stop"]
     for (let i = 0; i < sequenceWithStop.length; i++) {
-        await move(movementDictionary[sequenceWithStop[i]])
+        await move(movementDictionary[sequenceWithStop[i]] || [0, 0, 0, 0])
     }
 }
 
-runSequence(movements)
+module.exports = { runSequence }

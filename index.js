@@ -1,10 +1,20 @@
-const app = require("express")()
+const express = require("express")
 const PORT = 5000
+const app = express()
 
-require("./robot")
+const { runSequence } = require("./robot")
+
+app.use(express.json())
 
 app.get("/", (req, res) => {
-    res.send("HELLO SHOE")
+    try {
+        const { sequence } = req.body
+        await runSequence(sequence)
+        res.json({ success: true, message: "Shoe sequence has been run!" })
+    } catch (err) {
+        console.log(err)
+        res.json({ success: false, err })
+    }
 })
 
 app.listen(PORT, () => {
